@@ -13,12 +13,25 @@ class Wpsqt_Question_Multiple extends Wpsqt_Question {
 
 	public function __construct( array $values = array() ){
 		
-		global $wpdb;
+		global $wpdb, $blog_id;
 		
 		$this->_questionVars['answers'] = array( array( "text" => false, "correct" => false) );									
 		$this->_id = "multiple";										
 		$this->_formView = WPSQT_DIR."pages/admin/forms/question.multiple.php";
-		$this->_displayView = WPSQT_DIR."pages/site/questions/multiple.php";
+		
+		$quizPath = ( isset($_SESSION['wpsqt']['item_id'])
+			&& ctype_digit($_SESSION['wpsqt']['item_id']) ) ?
+			$blog_id.'/'.$_SESSION['wpsqt']['current_type'].'-'.$_SESSION['wpsqt']['item_id'].'/' : '';
+			
+		if ( file_exists(WPSQT_DIR.'pages/custom/'.$quizPath.$file) ){
+			$this->_displayView = WPSQT_DIR.'pages/custom/'.$quizPath.$file;
+		} elseif (file_exists(WPSQT_DIR.'pages/custom/'.$blog_id.'/shared/site/questions/multiple.php')) {
+			$this->_displayView = WPSQT_DIR.'pages/custom/'.$blog_id.'/shared/site/questions/multiple.php';
+		} else {
+			$this->_displayView = WPSQT_DIR."pages/site/questions/multiple.php";
+		}
+		
+		// WPSQT_DIR."pages/site/questions/multiple.php";
 	
 	}
 	
